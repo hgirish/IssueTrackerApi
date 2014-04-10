@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Reflection;
+using System.Web.Http;
 using System.Web.Http.Dependencies;
 using Autofac;
 using Autofac.Integration.WebApi;
@@ -44,7 +45,7 @@ namespace IssueTrackerApi
                 .InstancePerLifetimeScope();
 
             builder.RegisterHttpRequestMessage(config);
-
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
             var container = builder.Build();
 
             var resolver = 

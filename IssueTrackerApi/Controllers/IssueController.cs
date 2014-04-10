@@ -3,16 +3,19 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTrackerApi.Infrastructure;
+using IssueTrackerApi.Models;
 
 namespace IssueTrackerApi.Controllers
 {
     public class IssueController : ApiController
     {
-        private IIssueStore _store;
-
-        public IssueController(IIssueStore store)
+        private readonly IIssueStore _store;
+        private readonly IStateFactory<Issue, IssueState> _stateFactory;
+        public IssueController(IIssueStore store, 
+            IStateFactory<Issue, IssueState> stateFactory)
         {
             _store = store;
+            _stateFactory = stateFactory;
         }
 
         public string Get()
@@ -27,7 +30,8 @@ namespace IssueTrackerApi.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
-            return Request.CreateResponse(HttpStatusCode.OK);
+            return Request.CreateResponse(HttpStatusCode.OK,
+                _stateFactory.Create(issue));
         }
     }
 }
