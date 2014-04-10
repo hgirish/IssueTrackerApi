@@ -33,9 +33,9 @@
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1402.2112\lib\net40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Should">
       <HintPath>..\packages\Should.1.1.20\lib\Should.dll</HintPath>
@@ -56,9 +56,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WebApiContrib.CollectionJson, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="WebApiContrib.CollectionJson, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WebApiContrib.CollectionJson.0.1.2.0\lib\4.0\WebApiContrib.CollectionJson.dll</HintPath>
+      <HintPath>..\packages\WebApiContrib.CollectionJson.0.5.1\lib\net40\WebApiContrib.CollectionJson.dll</HintPath>
     </Reference>
     <Reference Include="WebApiContrib.Formatting.CollectionJson.Client">
       <HintPath>..\packages\WebApiContrib.Formatting.CollectionJson.Client.0.5.1\lib\net40\WebApiContrib.Formatting.CollectionJson.Client.dll</HintPath>
