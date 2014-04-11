@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -18,9 +20,17 @@ namespace IssueTrackerApi.Controllers
             _stateFactory = stateFactory;
         }
 
-        public string Get()
+        public async Task<HttpResponseMessage> Get()
         {
-            return "Hello";
+            var issues = await _store.FindAsync();
+            var issuesState = new IssuesState();
+            issuesState.Issues = issues.Select(i => _stateFactory.Create(i));
+            issuesState.Links.Add(new Link
+                                  {
+                                      Href = Request.RequestUri,
+                                      Rel = LinkFactory.Rels.Self
+                                  });
+            return Request.CreateResponse(HttpStatusCode.OK, issuesState);
         }
 
         public async Task<HttpResponseMessage> Get(string id)

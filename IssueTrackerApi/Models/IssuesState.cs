@@ -12,7 +12,7 @@ namespace IssueTrackerApi.Models
     {
         public IssuesState()
         {
-            
+            Links = new List<Link>();
         }
 
         public IEnumerable<IssueState> Issues { get; set; }

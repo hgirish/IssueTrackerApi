@@ -57,5 +57,121 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                     link.Href.AbsoluteUri.ShouldEqual("http://localhost/issueprocessor/1?action=transition");
                 });
         }
+
+        [Scenario]
+        public void RetrievingAnOpenIssue(Issue fakeIssue, IssueState issue)
+        {
+            "Given an existing open issue".
+                f(() =>
+                  {
+                      fakeIssue = FakeIssues.Single(i => i.Status == IssueStatus.Open);
+                      MockIssueStore.Setup(i => i.FindAsync("1"))
+                          .Returns(Task.FromResult(fakeIssue));
+                  });
+            "When it is retrieved"
+                .f(() =>
+                   {
+                       Request.RequestUri = _uriIssue1;
+                       issue = Client.SendAsync(Request)
+                           .Result.Content
+                           .ReadAsAsync<IssueState>().Result;
+                   });
+            "Then it should have a 'close' action link"
+                .f(() =>
+                   {
+                       var link = issue.Links.FirstOrDefault(l =>
+                           l.Rel == IssueLinkFactory.Rels.IssueProcessor &&
+                           l.Action == IssueLinkFactory.Actions.Close);
+                       link.ShouldNotBeNull();
+                       link.Href.AbsoluteUri.ShouldEqual(
+                           "http://localhost/issueprocessor/1?action=close");
+                   });
+        }
+
+        [Scenario]
+        public void RetrievingAClosedIssue(Issue fakeIssue, IssueState issue)
+        {
+            "Given an existing closed issue".
+                f(() =>
+                {
+                    fakeIssue = FakeIssues.Single(i => 
+                        i.Status == IssueStatus.Closed);
+                    MockIssueStore.Setup(i => i.FindAsync("2"))
+                        .Returns(Task.FromResult(fakeIssue));
+                });
+            "When it is retrieved".
+                f(() =>
+                {
+                    Request.RequestUri = _uriIssue2;
+                    issue = Client.SendAsync(Request)
+                        .Result.Content.ReadAsAsync<IssueState>().Result;
+                });
+            "Then it should have a 'open' action link".
+                f(() =>
+                {
+                    var link = issue.Links.FirstOrDefault(l => 
+                        l.Rel == IssueLinkFactory.Rels.IssueProcessor && 
+                        l.Action == IssueLinkFactory.Actions.Open);
+                    link.ShouldNotBeNull();
+                    link.Href.AbsoluteUri.ShouldEqual(
+                        "http://localhost/issueprocessor/2?action=open");
+
+                });
+        }
+
+        [Scenario]
+        public void RetrievingAnIssueThatDoesNotExist()
+        {
+            "Given an issue does not exist"
+                .f(() => MockIssueStore.Setup(i => i.FindAsync("1"))
+                    .Returns(Task.FromResult((Issue) null)));
+
+            "When it is retrieved"
+                .f(() =>
+                   {
+                       Request.RequestUri = _uriIssue1;
+                       Response = Client.SendAsync(Request).Result;
+                   });
+
+            "Then a '404 Not Found' status is returned"
+                .f(() => Response.StatusCode.ShouldEqual(
+                    HttpStatusCode.NotFound));
+        }
+
+        [Scenario]
+        public void RetrievingAllIssues(IssuesState issueState)
+        {
+            "Given existing issues"
+                .f(() => MockIssueStore.Setup(i => i.FindAsync())
+                    .Returns(Task.FromResult(FakeIssues)));
+
+            "When all issues are retrieved"
+                .f(() =>
+                   {
+                       Request.RequestUri = _uriIssues;
+                       Response = Client.SendAsync(Request).Result;
+                       issueState = Response.Content
+                           .ReadAsAsync<IssuesState>().Result;
+                   });
+
+            "Then a '200 OK' status is returned"
+                .f(() => Response.StatusCode.ShouldEqual(HttpStatusCode.OK));
+
+            "Then they are returned"
+                .f(() =>
+                   {
+                       issueState.Issues.FirstOrDefault(i => i.Id == "1").ShouldNotBeNull();
+                       issueState.Issues.FirstOrDefault(i => i.Id == "2").ShouldNotBeNull();
+                   });
+
+            "Then the collection should have a 'self' link"
+                .f(() =>
+                   {
+                       var link = issueState.Links.FirstOrDefault(
+                           l => l.Rel == IssueLinkFactory.Rels.Self);
+                       link.ShouldNotBeNull();
+                       link.Href.AbsoluteUri.ShouldEqual("http://localhost/issue");
+                   });
+        }
     }
 }
