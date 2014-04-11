@@ -23,10 +23,12 @@ namespace IssueTrackerApi.Models
             get
             {
                 var collection = new Collection();
-                var selfLink = Links.SingleOrDefault(
-                    l => l.Rel == LinkFactory.Rels.Self);
-                if (selfLink != null)
-                    collection.Href = selfLink.Href;
+                collection.Href = Links.SingleOrDefault(l => l.Rel == IssueLinkFactory.Rels.Self).Href;
+
+                //var selfLink = Links.SingleOrDefault(
+                //    l => l.Rel == IssueLinkFactory.Rels.Self);
+                //if (selfLink != null)
+                //    collection.Href = selfLink.Href;
                 collection.Links.Add(
                     new CJLink
                     {

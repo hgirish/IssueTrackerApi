@@ -2,10 +2,13 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using IssueTrackerApi.Infrastructure;
 using IssueTrackerApi.Models;
 using Should;
+using WebApiContrib.CollectionJson;
+using WebApiContrib.Formatting.CollectionJson.Client;
 using Xbehave;
 
 namespace IssueTrackerApi.AcceptanceTests.Features
@@ -172,6 +175,61 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                        link.ShouldNotBeNull();
                        link.Href.AbsoluteUri.ShouldEqual("http://localhost/issue");
                    });
+        }
+
+        [Scenario]
+        public void RetrievingAllIssuesAsCollectionJson(IReadDocument readDocument)
+        {
+            "Given an existing issues"
+                .f(() => MockIssueStore.Setup(i => i.FindAsync())
+                    .Returns(Task.FromResult(FakeIssues)));
+
+            "When all issues are retrived as Collection+Json"
+                .f(() =>
+                   {
+                       Request.RequestUri = _uriIssues;
+                       Request.Headers.Accept.Clear();
+                       Request.Headers.Accept.Add(
+                           new MediaTypeWithQualityHeaderValue(
+                               "application/vnd.collection+json"));
+                       Response = Client.SendAsync(Request).Result;
+                       readDocument = Response.Content
+                           .ReadAsAsync<ReadDocument>(
+                           new[] {new CollectionJsonFormatter()}).Result;
+
+                   });
+
+            "Then a '200 OK' status is returned"
+                .f(() => Response.StatusCode.ShouldEqual(HttpStatusCode.OK));
+
+            "Then Collection+Json is returned"
+                .f(() => readDocument.ShouldNotBeNull());
+
+            "Then the href should be set"
+                .f(() =>
+                   {
+                       var collection = readDocument.Collection;
+                       var href = collection.Href;
+                       Console.WriteLine(href.AbsoluteUri);
+                       href.AbsoluteUri
+                                 .ShouldEqual("http://localhost/issue");
+                   });
+
+            "Then all issues are returned"
+                .f(() =>
+                   {
+                       readDocument.Collection.Items.FirstOrDefault(
+                           i => i.Href.AbsoluteUri == "http://localhost/issue/1")
+                           .ShouldNotBeNull();
+                       readDocument.Collection.Items.FirstOrDefault(
+                           i => i.Href.AbsoluteUri == "http://localhost/issue/2")
+                           .ShouldNotBeNull();
+
+                   });
+
+            "Then the search query is returned"
+                .f(() => readDocument.Collection.Queries.SingleOrDefault(
+                    q => q.Rel == IssueLinkFactory.Rels.SearchQuery).ShouldNotBeNull());
         }
     }
 }

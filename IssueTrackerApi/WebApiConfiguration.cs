@@ -1,10 +1,12 @@
-﻿using System.Reflection;
+﻿using System.Net.Http.Headers;
+using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Dependencies;
 using Autofac;
 using Autofac.Integration.WebApi;
 using IssueTrackerApi.Infrastructure;
 using IssueTrackerApi.Models;
+using WebApiContrib.Formatting.CollectionJson.Client;
 
 namespace IssueTrackerApi
 {
@@ -57,7 +59,12 @@ namespace IssueTrackerApi
 
         private static void ConfigureFormatters(HttpConfiguration config)
         {
-            // TODO
+            
+            config.Formatters.Add(new CollectionJsonFormatter());
+// TODO
+            config.Formatters.JsonFormatter.SupportedMediaTypes
+                .Add(new MediaTypeHeaderValue("application/vnd.collection+json"));
+
         }
     }
 }
