@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using IssueTrackerApi.Infrastructure;
@@ -23,6 +22,12 @@ namespace IssueTrackerApi.Models
             get
             {
                 var collection = new Collection();
+                Console.WriteLine(Links.Count);
+                foreach (var link in Links)
+                {
+                    Console.WriteLine(link.Href.AbsoluteUri);
+                    Console.WriteLine(link.Rel);
+                }
                 collection.Href = Links.SingleOrDefault(l => l.Rel == IssueLinkFactory.Rels.Self).Href;
 
                 //var selfLink = Links.SingleOrDefault(

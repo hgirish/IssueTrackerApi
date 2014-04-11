@@ -6,6 +6,8 @@ using Autofac;
 using Autofac.Integration.WebApi;
 using IssueTrackerApi.Infrastructure;
 using IssueTrackerApi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using WebApiContrib.Formatting.CollectionJson.Client;
 
 namespace IssueTrackerApi
@@ -61,9 +63,15 @@ namespace IssueTrackerApi
         {
             
             config.Formatters.Add(new CollectionJsonFormatter());
-// TODO
+            JsonSerializerSettings settings = config.Formatters.JsonFormatter.SerializerSettings;
+            settings.NullValueHandling = NullValueHandling.Ignore;
+            settings.Formatting = Formatting.Indented;
+            settings.ContractResolver =
+                        new CamelCasePropertyNamesContractResolver();
             config.Formatters.JsonFormatter.SupportedMediaTypes
-                .Add(new MediaTypeHeaderValue("application/vnd.collection+json"));
+                .Add(new MediaTypeHeaderValue("application/vnd.issue+json"));
+            //config.Formatters.JsonFormatter.SupportedMediaTypes
+            //     .Add(new MediaTypeHeaderValue("application/vnd.collection+json"));
 
         }
     }

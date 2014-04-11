@@ -209,6 +209,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 .f(() =>
                    {
                        var collection = readDocument.Collection;
+
                        var href = collection.Href;
                        Console.WriteLine(href.AbsoluteUri);
                        href.AbsoluteUri

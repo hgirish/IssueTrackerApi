@@ -30,6 +30,7 @@ namespace IssueTrackerApi.Controllers
                                       Href = Request.RequestUri,
                                       Rel = LinkFactory.Rels.Self
                                   });
+            
             return Request.CreateResponse(HttpStatusCode.OK, issuesState);
         }
 
