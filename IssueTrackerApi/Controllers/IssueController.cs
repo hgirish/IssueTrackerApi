@@ -99,5 +99,16 @@ namespace IssueTrackerApi.Controllers
             await _store.UpdateAsync(issue);
             return Request.CreateResponse(HttpStatusCode.OK);
         }
+
+        public async Task<HttpResponseMessage> Delete(string id)
+        {
+            var issue = await _store.FindAsync(id);
+            if (issue == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            await _store.DeleteAsync(id);
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
     }
 }

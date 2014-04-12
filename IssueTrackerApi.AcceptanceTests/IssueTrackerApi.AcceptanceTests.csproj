@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features\CreatingIssues.cs" />
+    <Compile Include="Features\DeletingIssue.cs" />
     <Compile Include="Features\RetrievingIssues.cs" />
     <Compile Include="Features\UpdatingIssues.cs" />
     <Compile Include="IssueFeature.cs" />
