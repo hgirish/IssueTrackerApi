@@ -232,5 +232,33 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 .f(() => readDocument.Collection.Queries.SingleOrDefault(
                     q => q.Rel == IssueLinkFactory.Rels.SearchQuery).ShouldNotBeNull());
         }
+
+        [Scenario]
+        public void SearchingIssues(IssuesState issuesState)
+        {
+            "Given exisiting issues"
+                .f(() => MockIssueStore.Setup(i => i.FindAsyncQuery("another"))
+                    .Returns(Task.FromResult(FakeIssues.Where(i => i.Id == "2"))));
+
+            "When issues are searched"
+                .f(() =>
+                   {
+                       Request.RequestUri = new Uri(_uriIssues, "?searchtext=another");
+                       Response = Client.SendAsync(Request).Result;
+                       issuesState = Response.Content
+                           .ReadAsAsync<IssuesState>().Result;
+                   });
+
+            "Then a '200 OK' status is returned"
+                .f(() => Response.StatusCode.ShouldEqual(HttpStatusCode.OK));
+
+            "Then the collection should have a 'self' link"
+                .f(() =>
+                   {
+                       var issue = issuesState.Issues.FirstOrDefault();
+                       issue.ShouldNotBeNull();
+                       issue.Id.ShouldEqual("2");
+                   });
+        }
     }
 }

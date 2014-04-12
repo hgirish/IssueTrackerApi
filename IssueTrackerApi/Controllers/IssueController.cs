@@ -44,5 +44,18 @@ namespace IssueTrackerApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK,
                 _stateFactory.Create(issue));
         }
+
+        public async Task<HttpResponseMessage> GetSearch(string searchText)
+        {
+            var issue = await _store.FindAsyncQuery(searchText);
+            var issuesState = new IssuesState();
+            issuesState.Issues = issue.Select(i => _stateFactory.Create(i));
+            issuesState.Links.Add(new Link
+                                  {
+                                      Href = Request.RequestUri,
+                                      Rel =  LinkFactory.Rels.Self
+                                  });
+            return Request.CreateResponse(HttpStatusCode.OK, issuesState);
+        }
     }
 }
