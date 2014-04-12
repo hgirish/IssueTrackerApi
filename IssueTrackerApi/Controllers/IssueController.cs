@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTrackerApi.Infrastructure;
 using IssueTrackerApi.Models;
+using Newtonsoft.Json.Linq;
 
 namespace IssueTrackerApi.Controllers
 {
@@ -13,11 +14,14 @@ namespace IssueTrackerApi.Controllers
     {
         private readonly IIssueStore _store;
         private readonly IStateFactory<Issue, IssueState> _stateFactory;
+        private readonly IssueLinkFactory _linkFactory;
         public IssueController(IIssueStore store, 
-            IStateFactory<Issue, IssueState> stateFactory)
+            IStateFactory<Issue, IssueState> stateFactory, 
+            IssueLinkFactory linkFactory)
         {
             _store = store;
             _stateFactory = stateFactory;
+            _linkFactory = linkFactory;
         }
 
         public async Task<HttpResponseMessage> Get()
@@ -56,6 +60,44 @@ namespace IssueTrackerApi.Controllers
                                       Rel =  LinkFactory.Rels.Self
                                   });
             return Request.CreateResponse(HttpStatusCode.OK, issuesState);
+        }
+
+         public async Task<HttpResponseMessage> Post(dynamic newIssue)
+        {
+            var issue = new Issue
+                        {
+                            Title = newIssue.title,
+                            Description = newIssue.description
+                        };
+             await _store.CreateAsync(issue);
+
+             var response = Request.CreateResponse(HttpStatusCode.Created);
+             response.Headers.Location = _linkFactory.Self(issue.Id).Href;
+             return response;
+        }
+
+        public async Task<HttpResponseMessage> Patch(string id, dynamic issueUpdate)
+        {
+            var issue = await _store.FindAsync(id);
+
+            if (issue == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            foreach (JProperty prop in issueUpdate)
+            {
+                if (prop.Name == "title")
+                {
+                    issue.Title = prop.Value.ToObject<string>();
+                }
+                else if (prop.Name == "description")
+                {
+                    issue.Description = prop.Value.ToObject<string>();
+                }
+            }
+            await _store.UpdateAsync(issue);
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }
