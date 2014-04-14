@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTrackerApi.Infrastructure;
@@ -35,7 +36,11 @@ namespace IssueTrackerApi.Controllers
                                       Rel = LinkFactory.Rels.Self
                                   });
             
-            return Request.CreateResponse(HttpStatusCode.OK, issuesState);
+            var response = Request.CreateResponse(HttpStatusCode.OK, issuesState);
+            response.Headers.CacheControl = new CacheControlHeaderValue();
+            response.Headers.CacheControl.Public = true;
+            response.Headers.CacheControl.MaxAge = TimeSpan.FromMinutes(5);
+            return response;
         }
 
         public async Task<HttpResponseMessage> Get(string id)
@@ -45,8 +50,14 @@ namespace IssueTrackerApi.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
-            return Request.CreateResponse(HttpStatusCode.OK,
+            var response = Request.CreateResponse(HttpStatusCode.OK,
                 _stateFactory.Create(issue));
+            response.Headers.CacheControl = new CacheControlHeaderValue();
+            response.Headers.CacheControl.Public = true;
+            response.Headers.CacheControl.MaxAge = TimeSpan.FromMinutes(5);
+            response.Content.Headers.LastModified = new DateTimeOffset(new DateTime(2013, 9, 4));
+            ;
+            return response;
         }
 
         public async Task<HttpResponseMessage> GetSearch(string searchText)

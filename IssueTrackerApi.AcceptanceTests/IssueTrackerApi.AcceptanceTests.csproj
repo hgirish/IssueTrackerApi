@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Features\CreatingIssues.cs" />
     <Compile Include="Features\DeletingIssue.cs" />
+    <Compile Include="Features\OutputCaching.cs" />
     <Compile Include="Features\ProcessingIssue.cs" />
     <Compile Include="Features\RetrievingIssues.cs" />
     <Compile Include="Features\UpdatingIssues.cs" />
