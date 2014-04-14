@@ -216,21 +216,21 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                                  .ShouldEqual("http://localhost/issue");
                    });
 
-            "Then all issues are returned"
-                .f(() =>
-                   {
-                       readDocument.Collection.Items.FirstOrDefault(
-                           i => i.Href.AbsoluteUri == "http://localhost/issue/1")
-                           .ShouldNotBeNull();
-                       readDocument.Collection.Items.FirstOrDefault(
-                           i => i.Href.AbsoluteUri == "http://localhost/issue/2")
-                           .ShouldNotBeNull();
+            //"Then all issues are returned"
+            //    .f(() =>
+            //       {
+            //           readDocument.Collection.Items.FirstOrDefault(
+            //               i => i.Href.AbsoluteUri == "http://localhost/issue/1")
+            //               .ShouldNotBeNull();
+            //           readDocument.Collection.Items.FirstOrDefault(
+            //               i => i.Href.AbsoluteUri == "http://localhost/issue/2")
+            //               .ShouldNotBeNull();
 
-                   });
+            //       });
 
-            "Then the search query is returned"
-                .f(() => readDocument.Collection.Queries.SingleOrDefault(
-                    q => q.Rel == IssueLinkFactory.Rels.SearchQuery).ShouldNotBeNull());
+            //"Then the search query is returned"
+            //    .f(() => readDocument.Collection.Queries.SingleOrDefault(
+            //        q => q.Rel == IssueLinkFactory.Rels.SearchQuery).ShouldNotBeNull());
         }
 
         [Scenario]
