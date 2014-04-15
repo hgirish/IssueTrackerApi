@@ -23,7 +23,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                            i => i.Status == IssueStatus.Open);
                        MockIssueStore.Setup(i => i.FindAsync("1"))
                            .Returns(Task.FromResult(issue));
-                       MockIssueStore.Setup(i => i.UpdateAsync(issue))
+                       MockIssueStore.Setup(i => i.UpdateAsync("1",issue))
                            .Returns(Task.FromResult(""));
                    });
 
@@ -42,7 +42,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 .f(() =>
                    {
                        issue.Status.ShouldEqual(IssueStatus.Closed);
-                       MockIssueStore.Verify(i => i.UpdateAsync(issue));
+                       MockIssueStore.Verify(i => i.UpdateAsync("1",issue));
                    });
         }
 
@@ -56,7 +56,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                            i => i.Status == IssueStatus.Open);
                        MockIssueStore.Setup(i => i.FindAsync("1"))
                            .Returns(Task.FromResult(issue));
-                       MockIssueStore.Setup(i => i.UpdateAsync(issue))
+                       MockIssueStore.Setup(i => i.UpdateAsync("1",issue))
                            .Returns(Task.FromResult(""));
                    });
 
@@ -74,7 +74,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 .f(() =>
                    {
                        issue.Status.ShouldEqual(IssueStatus.Closed);
-                       MockIssueStore.Verify(i => i.UpdateAsync(issue));
+                       MockIssueStore.Verify(i => i.UpdateAsync("1",issue));
                    });
         }
 
@@ -88,7 +88,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                            i => i.Status == IssueStatus.Closed);
                        MockIssueStore.Setup(i => i.FindAsync("1"))
                            .Returns(Task.FromResult(issue));
-                       MockIssueStore.Setup(i => i.UpdateAsync(issue))
+                       MockIssueStore.Setup(i => i.UpdateAsync("1",issue))
                            .Returns(Task.FromResult(""));
                    });
 
@@ -114,7 +114,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                         i => i.Status == IssueStatus.Closed);
                     MockIssueStore.Setup(i => i.FindAsync("1"))
                         .Returns(Task.FromResult(issue));
-                    MockIssueStore.Setup(i => i.UpdateAsync(issue))
+                    MockIssueStore.Setup(i => i.UpdateAsync("1",issue))
                         .Returns(Task.FromResult(""));
                 });
 
@@ -133,7 +133,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 .f(() =>
                 {
                     issue.Status.ShouldEqual(IssueStatus.Open);
-                    MockIssueStore.Verify(i => i.UpdateAsync(issue));
+                    MockIssueStore.Verify(i => i.UpdateAsync("1",issue));
                 });
         }
 
@@ -145,7 +145,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 {
                     issue = FakeIssues.FirstOrDefault(i => i.Status == IssueStatus.Closed);
                     MockIssueStore.Setup(i => i.FindAsync("1")).Returns(Task.FromResult(issue));
-                    MockIssueStore.Setup(i => i.UpdateAsync(issue)).Returns(Task.FromResult(""));
+                    MockIssueStore.Setup(i => i.UpdateAsync("1",issue)).Returns(Task.FromResult(""));
                 });
             "When a POST request is made to the issue processor AND the action is 'transition'".
                 f(() =>
@@ -160,7 +160,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 f(() =>
                 {
                     issue.Status.ShouldEqual(IssueStatus.Open);
-                    MockIssueStore.Verify(i => i.UpdateAsync(issue));
+                    MockIssueStore.Verify(i => i.UpdateAsync("1",issue));
                 });
         }
 
@@ -172,7 +172,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 {
                     issue = FakeIssues.FirstOrDefault(i => i.Status == IssueStatus.Open);
                     MockIssueStore.Setup(i => i.FindAsync("1")).Returns(Task.FromResult(issue));
-                    MockIssueStore.Setup(i => i.UpdateAsync(issue)).Returns(Task.FromResult(""));
+                    MockIssueStore.Setup(i => i.UpdateAsync("1",issue)).Returns(Task.FromResult(""));
                 });
             "When a POST request is made to the issue processor AND the action is 'open'".
                 f(() =>
@@ -241,7 +241,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 {
                     issue = FakeIssues.FirstOrDefault(i => i.Status == IssueStatus.Open);
                     MockIssueStore.Setup(i => i.FindAsync("1")).Returns(Task.FromResult(issue));
-                    MockIssueStore.Setup(i => i.UpdateAsync(issue)).Returns(Task.FromResult(""));
+                    MockIssueStore.Setup(i => i.UpdateAsync("1",issue)).Returns(Task.FromResult(""));
                 });
             "When a POST request is made to the issue processor AND the action is 'unknown'".
                 f(() =>

@@ -34,7 +34,7 @@ namespace IssueTrackerApi.Infrastructure
             throw new System.NotImplementedException();
         }
 
-        public Task UpdateAsync(Issue issue)
+        public Task UpdateAsync(string issueId, dynamic values)
         {
             throw new System.NotImplementedException();
         }

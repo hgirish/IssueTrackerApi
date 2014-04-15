@@ -98,7 +98,7 @@ namespace IssueTrackerApi.Controllers
              return response;
         }
 
-        public async Task<HttpResponseMessage> Patch(string id, dynamic issueUpdate)
+        public async Task<HttpResponseMessage> Patch(string id, Issue issueUpdate)
         {
             var issue = await _store.FindAsync(id);
 
@@ -107,18 +107,18 @@ namespace IssueTrackerApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
 
-            foreach (JProperty prop in issueUpdate)
-            {
-                if (prop.Name == "title")
-                {
-                    issue.Title = prop.Value.ToObject<string>();
-                }
-                else if (prop.Name == "description")
-                {
-                    issue.Description = prop.Value.ToObject<string>();
-                }
-            }
-            await _store.UpdateAsync(issue);
+            //foreach (JProperty prop in issueUpdate)
+            //{
+            //    if (prop.Name == "title")
+            //    {
+            //        issue.Title = prop.Value.ToObject<string>();
+            //    }
+            //    else if (prop.Name == "description")
+            //    {
+            //        issue.Description = prop.Value.ToObject<string>();
+            //    }
+            //}
+            await _store.UpdateAsync(id,issueUpdate);
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 

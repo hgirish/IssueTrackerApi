@@ -24,21 +24,24 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                    {
                        fakeIssue = FakeIssues.FirstOrDefault();
                        title = fakeIssue.Title;
+                       Console.WriteLine(title);
                        MockIssueStore.Setup(i => i.FindAsync("1"))
                            .Returns(Task.FromResult(fakeIssue));
-                       MockIssueStore.Setup(i => i.UpdateAsync(
+                       MockIssueStore.Setup(i => i.UpdateAsync("1",
                            It.IsAny<Issue>()))
+                           .Callback<string, object>((a,x)=> fakeIssue = (Issue) x )
                            .Returns(Task.FromResult(""));
                    });
 
             "When a PATCH request is made"
                 .f(() =>
                    {
-                       dynamic issue = new JObject();
-                       issue.description = "Updated description";
+                       var issue = new Issue();
+                       issue.Description = "Updated description";
+                       issue.Title = title;
                        Request.Method = new HttpMethod("PATCH");
                        Request.RequestUri = _uriIssue1;
-                       Request.Content = new ObjectContent<dynamic>(
+                       Request.Content = new ObjectContent<Issue>(
                            issue, new JsonMediaTypeFormatter());
                        Response = Client.SendAsync(Request).Result;
                    });
@@ -47,7 +50,7 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 .f(() => Response.StatusCode.ShouldEqual(HttpStatusCode.OK));
 
             "Then the issue should be updated"
-                .f(() => MockIssueStore.Verify(i => i.UpdateAsync(It.IsAny<Issue>())));
+                .f(() => MockIssueStore.Verify(i => i.UpdateAsync("1",It.IsAny<Issue>())));
 
             "Then the description should be updated"
                 .f(() => fakeIssue.Description.ShouldEqual("Updated description"));

@@ -9,7 +9,7 @@ namespace IssueTrackerApi.Infrastructure
         Task<IEnumerable<Issue>> FindAsync();
         Task<Issue> FindAsync(string issueId);
         Task<IEnumerable<Issue>> FindAsyncQuery(string searchText);
-        Task UpdateAsync(Issue issue);
+        Task UpdateAsync(string issueId, dynamic values);
         Task DeleteAsync(string issueId);
         Task CreateAsync(Issue issue);
     }

@@ -8,6 +8,6 @@ namespace IssueTrackerApi.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public IssueStatus Status { get; set; }
-        public DateTimeOffset? LastModified { get; set; }
+        public DateTime LastModified { get; set; }
     }
 }
