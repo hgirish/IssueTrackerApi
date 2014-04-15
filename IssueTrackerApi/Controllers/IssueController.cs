@@ -50,13 +50,24 @@ namespace IssueTrackerApi.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
-            var response = Request.CreateResponse(HttpStatusCode.OK,
+            HttpResponseMessage response = null;
+            if (Request.Headers.IfModifiedSince.HasValue &&
+                Request.Headers.IfModifiedSince == issue.LastModified)
+            {
+                response = Request.CreateResponse(HttpStatusCode.NotModified);
+            }
+            else
+            {
+                response = Request.CreateResponse(HttpStatusCode.OK,
                 _stateFactory.Create(issue));
+                response.Content.Headers.LastModified = issue.LastModified;
+            }
+             
             response.Headers.CacheControl = new CacheControlHeaderValue();
             response.Headers.CacheControl.Public = true;
             response.Headers.CacheControl.MaxAge = TimeSpan.FromMinutes(5);
-            response.Content.Headers.LastModified = new DateTimeOffset(new DateTime(2013, 9, 4));
-            ;
+            //response.Content.Headers.LastModified = new DateTimeOffset(new DateTime(2013, 9, 4));
+            
             return response;
         }
 

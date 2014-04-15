@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IssueTrackerApi.Infrastructure;
 using IssueTrackerApi.Models;
 using Should;
+using Should.Core.Assertions;
 using Xbehave;
 
 namespace IssueTrackerApi.AcceptanceTests.Features
@@ -57,6 +58,8 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                 f(() =>
                 {
                     fakeIssue = FakeIssues.FirstOrDefault();
+                    fakeIssue.LastModified = new DateTimeOffset(new DateTime(2013, 9, 4));
+              
                     MockIssueStore.Setup(i => i.FindAsync("1"))
                         .Returns(Task.FromResult(fakeIssue));
                 });
@@ -101,6 +104,46 @@ namespace IssueTrackerApi.AcceptanceTests.Features
                     link.ShouldNotBeNull();
                     link.Href.AbsoluteUri.ShouldEqual("http://localhost/issueprocessor/1?action=transition");
                 });
+        }
+
+
+        [Scenario]
+        public void RetrievingNonModifiedIssue(IssueState issue, Issue fakeIssue)
+        {
+            "Given an existing issue".
+                f(() =>
+                {
+                    fakeIssue = FakeIssues.FirstOrDefault();
+                    fakeIssue.LastModified = new DateTimeOffset(new DateTime(2013, 9, 4));
+                    MockIssueStore.Setup(i => i.FindAsync("1"))
+                        .Returns(Task.FromResult(fakeIssue));
+                });
+            "When it is retrieved with an IfModifiedSince header".
+                f(() =>
+                {
+                    Request.RequestUri = _uriIssue1;
+                    Request.Headers.IfModifiedSince = fakeIssue.LastModified;
+                    Response = Client.SendAsync(Request).Result;
+//                    issue = Response.Content.ReadAsAsync<IssueState>().Result;
+
+                });
+
+            //"Then a lastModified header is returned"
+            //    .f(() => Response.Content.Headers.LastModified
+            //        .ShouldEqual(new DateTimeOffset(new DateTime(2013, 9, 4))));
+
+            "Then a CacheControl header is returned"
+                .f(() =>
+                {
+                    Response.Headers.CacheControl.Public.ShouldBeTrue();
+                    Response.Headers.CacheControl.MaxAge.ShouldEqual(TimeSpan.FromMinutes(5));
+                });
+            "Then a '304 NOT MODIFIED' status is returened"
+                .f(() => Response.StatusCode.ShouldEqual(HttpStatusCode.NotModified));
+            "Then it is not returned"
+                .f(() => Assert.Null(Response.Content));
+           
+          
         }
     }
 }
